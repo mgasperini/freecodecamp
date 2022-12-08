@@ -1,0 +1,14 @@
+UPDATE stations
+SET 
+lat = tmp.start_lat, 
+lng = tmp.start_lng
+FROM (
+	SELECT station_number,  AVG(r.start_lat) start_lat,
+	AVG(r.start_lng) start_lng
+	FROM stations AS s
+	INNER JOIN rides as r
+	ON s.station_number = r.id_station_start
+	WHERE s.station_number > 0 AND (start_lat <> 0 AND start_lng <> 0 AND start_lng IS NOT NULL )
+	GROUP BY s.station_number
+) AS tmp
+WHERE tmp.station_number = stations.station_number;
